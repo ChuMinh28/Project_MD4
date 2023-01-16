@@ -1,7 +1,6 @@
 package ra.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -34,4 +33,8 @@ public class Users {
     @JoinTable(name = "User_Role",joinColumns = @JoinColumn(name = "UserId"),
             inverseJoinColumns = @JoinColumn(name = "RoleId"))
     private Set<Roles> listRoles = new HashSet<>();
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "WishList",joinColumns = @JoinColumn(name = "UserId"),
+    inverseJoinColumns = @JoinColumn(name = "ProductID"))
+    private Set<Product> listProduct = new HashSet<>();
 }

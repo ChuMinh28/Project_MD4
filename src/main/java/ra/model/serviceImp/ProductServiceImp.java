@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import ra.model.entity.Product;
 import ra.model.repository.ProductRepository;
 import ra.model.service.ProductService;
+import ra.payload.response.ProductShort;
 
 import java.util.List;
 @Service
@@ -41,5 +42,15 @@ public class ProductServiceImp implements ProductService {
     @Override
     public void delete(int productID) {
         productRepository.deleteById(productID);
+    }
+
+    @Override
+    public void deleteFromWishList(int productID) {
+
+    }
+
+    @Override
+    public List<Product> getWishlist(int userId) {
+        return productRepository.getAllWishList(userId);
     }
 }

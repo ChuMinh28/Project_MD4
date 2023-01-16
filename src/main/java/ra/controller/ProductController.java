@@ -6,17 +6,22 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ra.model.entity.Catalog;
 import ra.model.entity.Product;
 import ra.model.entity.ProductImage;
+import ra.model.entity.Users;
 import ra.model.service.CatalogService;
 import ra.model.service.ImageService;
 import ra.model.service.ProductService;
+import ra.model.service.UserService;
 import ra.payload.request.ProductRequest;
 import ra.payload.response.MessageResponse;
 import ra.payload.response.ProductDTO;
 import ra.payload.response.ProductShort;
+import ra.security.CustomUserDetails;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,7 +63,7 @@ public class ProductController {
         return listProductShort;
     }
 
-    @GetMapping("/{productID}")
+    @GetMapping("/detail/{productID}")
     public ProductDTO findById(@PathVariable("productID") int productID) {
         Product product = productService.findById(productID);
         ProductDTO productDTO = new ProductDTO();

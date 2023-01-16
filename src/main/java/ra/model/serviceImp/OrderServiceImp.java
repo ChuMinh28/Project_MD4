@@ -25,4 +25,9 @@ public class OrderServiceImp implements OrderService {
     public Order findByID(int orderID) {
         return orderRepository.findById(orderID).get();
     }
+
+    @Override
+    public Order findByUser(int userId) {
+        return orderRepository.searchOrderByUsers_UserId(userId);
+    }
 }

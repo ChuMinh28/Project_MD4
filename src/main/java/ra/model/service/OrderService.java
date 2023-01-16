@@ -8,4 +8,5 @@ public interface OrderService {
     List<Order> getAllOrder();
     Order save(Order order);
     Order findByID(int orderID);
+    Order findByUser(int userId);
 }

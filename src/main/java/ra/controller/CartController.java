@@ -2,6 +2,7 @@ package ra.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ra.model.entity.Cart;
@@ -34,6 +35,7 @@ public class CartController {
     UserService userService;
     @Autowired
     OrderService orderService;
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/getCart")
     public ResponseEntity<?> getCartByUSerID() {
         CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -51,6 +53,7 @@ public class CartController {
         return ResponseEntity.ok(listCartDTO);
     }
 
+    @PreAuthorize("hasRole('USER')")
     @PostMapping
     public ResponseEntity<?> insertCart(@RequestBody CartRequest cartRequest) {
         try {
@@ -68,17 +71,26 @@ public class CartController {
                 }
             }
             if (check) {
-                cart.setQuantity(cartRequest.getQuantity() + cart.getQuantity());
-                cart.setTotalPrice(cart.getProduct().getPrice() * cart.getQuantity());
-                cartService.insertCart(cart);
+                if (cartRequest.getQuantity()<=product.getQuantity()) {
+                    cart.setQuantity(cartRequest.getQuantity() + cart.getQuantity());
+                    cart.setTotalPrice(cart.getProduct().getPrice() * cart.getQuantity());
+                    cartService.insertCart(cart);
+                }else {
+                    return ResponseEntity.badRequest().body(new MessageResponse("Số lượng hàng còn lại trong kho không đủ! Vui lòng chọn lại"));
+                }
+
             } else {
-                Cart cartNew = new Cart();
-                cartNew.setQuantity(cartRequest.getQuantity());
-                cartNew.setUsers(users);
-                cartNew.setProduct(product);
-                cartNew.setPrice(product.getPrice());
-                cartNew.setTotalPrice(cartNew.getProduct().getPrice() * cartNew.getQuantity());
-                cartService.insertCart(cartNew);
+                if (cartRequest.getQuantity()<=product.getQuantity()) {
+                    Cart cartNew = new Cart();
+                    cartNew.setQuantity(cartRequest.getQuantity());
+                    cartNew.setUsers(users);
+                    cartNew.setProduct(product);
+                    cartNew.setPrice(product.getPrice());
+                    cartNew.setTotalPrice(cartNew.getProduct().getPrice() * cartNew.getQuantity());
+                    cartService.insertCart(cartNew);
+                }else {
+                    return ResponseEntity.badRequest().body(new MessageResponse("Số lượng hàng còn lại trong kho không đủ! Vui lòng chọn lại"));
+                }
             }
             return ResponseEntity.ok(new MessageResponse("Add product to cart successfully"));
         } catch (Exception e) {
@@ -87,6 +99,7 @@ public class CartController {
         }
     }
 
+    @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/delete/{cartID}")
     public ResponseEntity<?> deleteProductFromCart(@PathVariable("cartID") int cartID) {
         try {
@@ -98,6 +111,7 @@ public class CartController {
         }
     }
 
+    @PreAuthorize("hasRole('USER')")
     @PutMapping("/{cartID}")
     public ResponseEntity<?> updateCart(@RequestParam("quantity") int quantity, @PathVariable("cartID") int cartID){
         try {

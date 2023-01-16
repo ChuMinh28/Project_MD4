@@ -17,7 +17,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int orderID;
     private float totalAmount;
-    private int orderStatus;
+    private String orderStatus;
     @JsonFormat(pattern = "dd/MM/yyyy")
     @Column(name = "createdDate")
     private Date created;
